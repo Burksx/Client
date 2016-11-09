@@ -10202,6 +10202,13 @@ public class client extends RSApplet {
 		drawingFlames = false;
 	}
 
+	void mouseWheelDragged(int i, int j) {
+		if (!mouseWheelDown)
+			return;
+		this.anInt1186 += i * 3;
+		this.anInt1187 += (j << 1);
+	}
+	
 	public void raiseWelcomeScreen()
 	{
 		welcomeScreenRaised = true;

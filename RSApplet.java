@@ -189,11 +189,11 @@ public class RSApplet extends Applet implements Runnable, MouseListener, MouseMo
 		shouldClearScreen = true;
 		raiseWelcomeScreen();
 	}
-
-	public final void mousePressed(MouseEvent mouseevent)
+	
+	public final void mousePressed(MouseEvent e)
 	{
-		int i = mouseevent.getX();
-		int j = mouseevent.getY();
+		int i = e.getX();
+		int j = e.getY();
 		if(gameFrame != null)
 		{
 			i -= 4;
@@ -203,7 +203,14 @@ public class RSApplet extends Applet implements Runnable, MouseListener, MouseMo
 		clickX = i;
 		clickY = j;
 		clickTime = System.currentTimeMillis();
-		if(mouseevent.isMetaDown())
+		int type = e.getButton();
+		if (type == 2) {
+			mouseWheelDown = true;
+			mouseWheelX = i;
+			mouseWheelY = j;
+			return;
+		}
+		if(e.isMetaDown())
 		{
 			clickMode1 = 2;
 			clickMode2 = 2;
@@ -218,6 +225,7 @@ public class RSApplet extends Applet implements Runnable, MouseListener, MouseMo
 	{
 		idleTime = 0;
 		clickMode2 = 0;
+		mouseWheelDown = false;
 	}
 
 	public final void mouseClicked(MouseEvent mouseevent)
@@ -235,18 +243,31 @@ public class RSApplet extends Applet implements Runnable, MouseListener, MouseMo
 		mouseY = -1;
 	}
 
-	public final void mouseDragged(MouseEvent mouseevent)
-	{
-		int i = mouseevent.getX();
-		int j = mouseevent.getY();
-		if(gameFrame != null)
-		{
-			i -= 4;
-			j -= 22;
+	public int mouseWheelX;
+	public int mouseWheelY;
+	public final void mouseDragged(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		if(gameFrame != null) {
+			Insets insets = gameFrame.getInsets();
+			x -= insets.left;//4
+			y -= insets.top;//22
+		}
+		if (mouseWheelDown) {
+			y = mouseWheelX - e.getX();
+			int k = mouseWheelY - e.getY();
+			mouseWheelDragged(y, -k);
+			mouseWheelX = e.getX();
+			mouseWheelY = e.getY();
+			return;
 		}
 		idleTime = 0;
-		mouseX = i;
-		mouseY = j;
+		mouseX = x;
+		mouseY = y;
+		clickType = DRAG;
+	}
+	void mouseWheelDragged(int param1, int param2) {
+
 	}
 
 	public final void mouseMoved(MouseEvent mouseevent)
@@ -564,6 +585,9 @@ public class RSApplet extends Applet implements Runnable, MouseListener, MouseMo
 	private int clickX;
 	private int clickY;
 	private long clickTime;
+    public boolean mouseWheelDown;
+	public int clickType;
+	public final int DRAG = 2;
 	int clickMode3;
 	int saveClickX;
 	int saveClickY;
