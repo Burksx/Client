@@ -19,7 +19,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
+# java
+*.class
 # =========================
 # Operating System Files
 # =========================
